@@ -12,7 +12,9 @@ class PokeListViewModel(): ViewModel() {
     var uiState by mutableStateOf(PokeListUiState())
         private set
 
-    val itemsList = (0..5).toList()
+    val itemsList = (0..60).toList()
+    val sections = (0 until 25).toList().chunked(5)
+
 
     val itemsIndexedList = listOf("A", "B", "C")
 

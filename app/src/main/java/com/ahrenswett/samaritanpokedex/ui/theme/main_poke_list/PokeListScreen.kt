@@ -3,11 +3,9 @@ package com.ahrenswett.samaritanpokedex.ui.theme.main_poke_list
 import android.graphics.Color
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.GridItemSpan
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
@@ -51,7 +49,7 @@ fun PokeListScreen(
             Icon(
                 painter = painterResource(id = R.drawable.title_image),
                 contentDescription = "Go to captured Poké list",
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().height(80.dp),
             )
                  },
         scaffoldState = scaffoldState,
@@ -73,15 +71,13 @@ fun PokeListScreen(
         ){
         LazyVerticalGrid(
             cells = GridCells.Fixed(2),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ){
-            items(viewModel.itemsList.size){
-                Text("Item is $it", itemModifier)
-            }
-            item {
-                Text("Single item", itemModifier)
-            }
-            itemsIndexed(viewModel.itemsIndexedList) { index, item ->
-                Text("Item at index $index is $item", itemModifier)
+            viewModel.sections.forEachIndexed { index, items ->
+                item(span = { GridItemSpan(itemColumn) }) {
+                    Text("Item is $it", itemModifier)
+                }
             }
         }
     }
