@@ -1,6 +1,7 @@
 # Samaritan Technical Challenge
-App built using MVVM architecture and utilizes Jetpack Compose for UI, Kotlin Coroutiens for concurency, Kotlin Serialization , and K-tor for HTTP requests.
+App built using MVVM architecture and utilizes Jetpack Compose for UI, Kotlin Coroutines for concurrency, Kotlin Serialization , and K-tor for HTTP requests.
 
+* [Dependency Documentation links](#Dependency-documentation-links)
 
 ## Task: Create a Pokédex like app. 
 
@@ -47,3 +48,11 @@ App built using MVVM architecture and utilizes Jetpack Compose for UI, Kotlin Co
 	* [ ] Displays Captured Level: localStorage.currentPokemon.capturedLevel
 
 
+# Dependency documentation links
+* [Compose Navigation](https://developer.android.com/jetpack/compose/navigation)
+* [Ktor](https://ktor.io/docs/welcome.html)
+* [Kotlin Serialization](https://kotlinlang.org/docs/serialization.html)
+
+# WorkFlow
+Add Navigation
+Adding Ktor client 
