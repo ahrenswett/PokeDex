@@ -16,7 +16,7 @@ import com.ahrenswett.samaritanpokedex.navigation.UiEvent
 // Gets data from the PokeListViewModel passes user input to PokeListViewModel
 fun PokeListScreen(
     onNavigate: (UiEvent.Navigate) -> Unit,
-    viewModel: PokeListViewModel = hiltViewModel()
+    viewModel: PokeListViewModel = PokeListViewModel()
 ){
 
     LaunchedEffect(key1 = true){
