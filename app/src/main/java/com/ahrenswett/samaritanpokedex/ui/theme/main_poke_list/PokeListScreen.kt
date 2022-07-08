@@ -38,7 +38,6 @@ fun PokeListScreen(
 
     val itemModifier = Modifier.border(1.dp, Blue).height(80.dp).wrapContentSize()
     val scaffoldState = rememberScaffoldState()
-//    val pokeList = viewModel.pokeList.receiveAsFlow()
 
     LaunchedEffect(key1 = true){
         // TODO: Define
@@ -70,11 +69,12 @@ fun PokeListScreen(
             )}
         ){
         LazyVerticalGrid(
+            // TODO: figure out network calls based on items loaded in the grid
             cells = GridCells.Fixed(2),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ){
-            viewModel.sections.forEachIndexed { index, items ->
+            viewModel.pokeList.forEachIndexed { index, items ->
                 item(span = { GridItemSpan(itemColumn) }) {
                     Text("Item is $it", itemModifier)
                 }
