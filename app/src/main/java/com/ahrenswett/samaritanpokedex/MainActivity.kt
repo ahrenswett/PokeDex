@@ -9,6 +9,7 @@ import com.ahrenswett.samaritanpokedex.navigation.Navigation
 import com.ahrenswett.samaritanpokedex.ui.theme.SamaritanPokedexTheme
 import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

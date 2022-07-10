@@ -1,25 +1,31 @@
-package com.ahrenswett.samaritanpokedex.ui.theme.main_poke_list
+package com.ahrenswett.samaritanpokedex.ui.main_poke_list
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.ahrenswett.samaritanpokedex.data.NetworkSource
-import com.ahrenswett.samaritanpokedex.modules.Pokemon
+import com.ahrenswett.samaritanpokedex.data.Repository
+import com.ahrenswett.samaritanpokedex.data.api.NetworkSource
+import com.ahrenswett.samaritanpokedex.domain.models.Response
 import com.ahrenswett.samaritanpokedex.navigation.Routes
 import com.ahrenswett.samaritanpokedex.navigation.UiEvent
+import com.ahrenswett.samaritanpokedex.util.Constants
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
-class PokeListViewModel(private val networkSource: NetworkSource = NetworkSource("https://pokeapi.co/api/v2/pokemon?limit=20&offset=0") ): ViewModel() {
+@HiltViewModel
+class PokeListViewModel @Inject constructor(
+    private val repo: Repository
 
+): ViewModel(){
+
+    // Used to get details of specific Pokemon
+    val pokeMap = repo.baseResponse?.results?.map{it.name; it.url}
 
     var uiState by mutableStateOf(PokeListUiState())
         private set
 
-    val pokeList = networkSource.response!!.results
-    val sections = (0 until 25).toList().chunked(5)
-
-
-    val itemsIndexedList = listOf("A", "B", "C")
 
     fun onEvent(event: PokeListEvents) {
         when (event) {

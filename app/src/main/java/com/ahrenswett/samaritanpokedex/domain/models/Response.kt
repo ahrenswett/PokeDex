@@ -1,4 +1,4 @@
-package com.ahrenswett.samaritanpokedex.modules
+package com.ahrenswett.samaritanpokedex.domain.models
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -11,7 +11,7 @@ data class Response(
     val count : Int,
     val next : String?,
     val previous : String?,
-    val results : List<Pokemon>
+    val results : List<PokemonAddresses>
 )
 
 fun decodeResponse(response : String) : Response {

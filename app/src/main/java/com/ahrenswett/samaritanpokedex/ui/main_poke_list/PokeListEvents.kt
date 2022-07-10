@@ -1,4 +1,4 @@
-package com.ahrenswett.samaritanpokedex.ui.theme.main_poke_list
+package com.ahrenswett.samaritanpokedex.ui.main_poke_list
 
 
 /**
