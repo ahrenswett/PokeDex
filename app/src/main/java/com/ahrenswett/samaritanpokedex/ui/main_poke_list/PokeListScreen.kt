@@ -1,21 +1,30 @@
 package com.ahrenswett.samaritanpokedex.ui.main_poke_list
 
+import android.content.ClipData
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.ahrenswett.samaritanpokedex.R
+import com.ahrenswett.samaritanpokedex.domain.models.Pokemon
 import com.ahrenswett.samaritanpokedex.navigation.UiEvent
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.forEach
+import kotlinx.coroutines.flow.toList
+import kotlinx.serialization.builtins.serializer
+import okhttp3.internal.notify
 
 
 /* Shows a list of Pokemon in a grid format.
@@ -29,9 +38,11 @@ import com.ahrenswett.samaritanpokedex.navigation.UiEvent
 @Composable
 // Gets data from the PokeListViewModel passes user input to PokeListViewModel
 fun PokeListScreen(
-    onNavigate: (UiEvent.Navigate) -> Unit,
-    viewModel: PokeListViewModel )
-{
+    onPokeListChange: (UiEvent.Navigate) -> Unit,
+    viewModel: PokeListViewModel
+){
+
+    val pokeList = viewModel.pokemonList.collectAsState(initial = 10)
 
 
     val itemModifier = Modifier
@@ -42,6 +53,11 @@ fun PokeListScreen(
 
     LaunchedEffect(key1 = true){
         // TODO: Define
+        viewModel.uiEvent.collect{ event ->
+            when(event){
+                is
+            }
+        }
     }
 
     Scaffold(
@@ -65,8 +81,9 @@ fun PokeListScreen(
                         contentDescription = "Go to captured Poké list",
                         Modifier
                             .size(48.dp)
-                            .alpha(1F).
-                            then(Modifier.fillMaxWidth()).then(Modifier.fillMaxHeight()),
+                            .alpha(1F)
+                            .then(Modifier.fillMaxWidth())
+                            .then(Modifier.fillMaxHeight()),
                     )
                 }
 
@@ -78,11 +95,12 @@ fun PokeListScreen(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ){
-          // add on click listener to each item in the grid
-//          viewModel.pokeList.forEachIndexed{ index, pokemon ->
-//                item(span = { GridItemSpan(itemColumn)}  ) {
-//                    Text("Item is ${pokemon.name}\n${pokemon.url}", itemModifier)
-//                }
+//           add on click listener to each item in the grid
+
+            viewModel.pokemonList
+                item(span = { GridItemSpan(itemColumn) }  ) {
+                    Text("Item is ${pokeList.value}", itemModifier)
+                }
 //            }
         }
     }

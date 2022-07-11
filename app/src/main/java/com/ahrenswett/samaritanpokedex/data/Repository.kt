@@ -1,6 +1,8 @@
 package com.ahrenswett.samaritanpokedex.data
 
-import com.ahrenswett.samaritanpokedex.data.api.NetworkSource
+import com.ahrenswett.samaritanpokedex.data.api.Api
+import com.ahrenswett.samaritanpokedex.domain.models.Pokemon
+import com.ahrenswett.samaritanpokedex.domain.models.PokemonAddresses
 import com.ahrenswett.samaritanpokedex.domain.models.Response
 import com.ahrenswett.samaritanpokedex.util.Constants
 import dagger.hilt.android.scopes.ActivityScoped
@@ -9,13 +11,17 @@ import javax.inject.Inject
 
 @ActivityScoped
 class Repository @Inject constructor(
-    private val api: NetworkSource
+    private val api: Api
 ){
-    val baseResponse = runBlocking { getPokemonListResponse(Constants.BASE_URL) }
+    var baseResponse: Response? = runBlocking { getPokemonListResponse(Constants.BASE_URL) }
 
-    suspend fun getPokemonListResponse(url:String): Response? {
+    suspend fun getPokemonListResponse(url:String): Response {
 //        TODO("Need to address passing the limit and offset")
-        return api.loadPokeList(url)}
+        return api.loadPokeAddresses(url)}
+
+    suspend fun getListItems(url: String) : Pokemon{
+        return api.getListItems(url)
+    }
 
 
 //   suspend fun network(){

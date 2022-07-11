@@ -8,7 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ahrenswett.samaritanpokedex.data.Repository
-import com.ahrenswett.samaritanpokedex.data.api.NetworkSource
+import com.ahrenswett.samaritanpokedex.data.api.Api
 import com.ahrenswett.samaritanpokedex.ui.main_poke_list.PokeListScreen
 import com.ahrenswett.samaritanpokedex.ui.main_poke_list.PokeListViewModel
 
@@ -26,7 +26,7 @@ fun Navigation(){
                 onNavigate = {
                     navController.navigate(it.route)
                 },
-                viewModel = PokeListViewModel(Repository(NetworkSource()))
+                viewModel = PokeListViewModel(Repository(Api()))
             )
         }
         // Composable for Details page

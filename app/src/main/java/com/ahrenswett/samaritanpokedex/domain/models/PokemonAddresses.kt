@@ -3,7 +3,7 @@ package com.ahrenswett.samaritanpokedex.domain.models
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
-val pokemonformat = Json { ignoreUnknownKeys = true }
+val pokemonAddressFormat = Json { ignoreUnknownKeys = true}
 
 @Serializable
 data class PokemonAddresses(
@@ -11,6 +11,6 @@ data class PokemonAddresses(
     val url: String
 )
 
-fun decodePokemon(responseBody: String): PokemonAddresses{
-    return pokemonformat.decodeFromString(PokemonAddresses.serializer(), responseBody)
+fun decodePokemonAddress(responseBody: String): PokemonAddresses{
+    return pokemonAddressFormat.decodeFromString(PokemonAddresses.serializer(), responseBody)
 }
