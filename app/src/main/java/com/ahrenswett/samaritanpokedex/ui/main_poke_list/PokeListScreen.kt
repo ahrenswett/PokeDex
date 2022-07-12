@@ -112,8 +112,6 @@ fun PokeListScreen(
 }
 
 
-
-
 @Composable
 fun PokemonItem(pokemon: Pokemon, pokeClick: (PokeListEvents.OnPokeClick) -> Unit ){
     Card(
@@ -125,8 +123,10 @@ fun PokemonItem(pokemon: Pokemon, pokeClick: (PokeListEvents.OnPokeClick) -> Uni
             .height(150.dp)
             .fillMaxWidth()
             .clickable(enabled = true) {
-                println("Clicked ${pokemon.name}, is a ${pokemon.types[0].type.get("name")} pokemon")
-                if (pokemon.sprites?.officialArtwork != null) println(pokemon.sprites?.officialArtwork.entries)
+
+                println("Clicked ${pokemon.name}, is a ${pokemon.types[0].type.name} pokemon")
+                println(pokemon.sprites.other.officialArtwork.front_default)
+
                 pokeClick.invoke(PokeListEvents.OnPokeClick(pokeID = pokemon.order!!))
             }
     ) {
@@ -143,15 +143,10 @@ fun PokemonItem(pokemon: Pokemon, pokeClick: (PokeListEvents.OnPokeClick) -> Uni
             )
             for (type in pokemon.types) {
                 Text(
-                    text = "Type ${type.type.get("name")}".replaceFirstChar { it.uppercase() },
+                    text = "Type ${type.type.name}".replaceFirstChar { it.uppercase() },
                     color = White, textAlign = TextAlign.Center
                 )
             }
         }
     }
-}
-
-@Composable
-fun PokeType(){
-
 }

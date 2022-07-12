@@ -12,37 +12,110 @@ val pokemonFormat = Json {
     explicitNulls = false
     isLenient = true }
 
+//@Serializable
+//data class Pokemon(
+//    val name : String?,
+//    val types : List<Type>,
+//    val stats: List<Stat>,
+//    val order : Int?,
+//    // getting this is killing me have asked in Serialization chat waiting for an answer
+//    val sprites: Other?,
+//    val weight: Int,
+//    val height: Int
+//)
+//
+//@Serializable
+//data class Type(
+//   val type: Map<String,String>
+//)
+//
+//@Serializable
+//data class Stat(
+//    val base_stat: Int,
+//    val effort : Int,
+//    val stat: Map<String,String>
+//)
+//
+//@Serializable
+//data class Other(
+//
+//    @SerialName("official-artwork") val officialArtwork: Map<String,String>?,
+////    val other: Map<String,Map<String,String>>?
+//)
 @Serializable
 data class Pokemon(
-    val name : String?,
-    val types : List<Type>,
+    val id: Int,
+    val name: String,
+    val order: Int,
+    val sprites: Sprites,
     val stats: List<Stat>,
-    val order : Int?,
-    // getting this is killing me have asked in Serialization chat waiting for an answer
-    val sprites: Other?,
+    val types: List<Type>,
     val weight: Int,
-    val height: Int
+    val height: Int,
 )
+
+
+
 
 @Serializable
-data class Type(
-   val type: Map<String,String>
+data class Sprites(
+    val back_default: String,
+    val back_female: String?,
+    val back_shiny: String,
+    val back_shiny_female: String?,
+    val front_default: String,
+    val front_female: String?,
+    val front_shiny: String,
+    val front_shiny_female: String?,
+    val other: Other,
 )
-
 @Serializable
 data class Stat(
     val base_stat: Int,
-    val effort : Int,
-    val stat: Map<String,String>
+    val effort: Int,
+    val stat: StatX
+)
+@Serializable
+data class Type(
+    val slot: Int,
+    val type: TypeX
 )
 
 @Serializable
 data class Other(
-
-    @SerialName("official-artwork") val officialArtwork: Map<String,String>?,
-//    val other: Map<String,Map<String,String>>?
+    val dream_world: DreamWorld,
+    val home: Home,
+    @SerialName("official-artwork")val officialArtwork: OfficialArtwork
 )
 
+
+@Serializable
+data class DreamWorld(
+    val front_default: String,
+    val front_female: String?
+)
+@Serializable
+data class Home(
+    val front_default: String,
+    val front_female: String?,
+    val front_shiny: String,
+    val front_shiny_female: String?
+)
+@Serializable
+data class OfficialArtwork(
+    val front_default: String
+)
+
+@Serializable
+data class StatX(
+    val name: String,
+    val url: String
+)
+@Serializable
+data class TypeX(
+    val name: String,
+    val url: String
+)
 
 
 /*
