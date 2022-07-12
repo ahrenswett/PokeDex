@@ -22,6 +22,7 @@ class Api(private val client: HttpClient = PokeHttpClient){
     }
 
     suspend fun getListItem(url: String): Pokemon = withContext(Dispatchers.IO){
+        println(url)
         return@withContext decodePokemon(client.getPoke(url)!!.bodyAsText())
     }
 

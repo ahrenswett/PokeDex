@@ -1,10 +1,9 @@
 package com.ahrenswett.samaritanpokedex.domain.models
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonElement
 
 @OptIn(ExperimentalSerializationApi::class)
 val pokemonFormat = Json {
@@ -17,66 +16,33 @@ val pokemonFormat = Json {
 data class Pokemon(
     val name : String?,
     val types : List<Type>,
-    val Stats: List<Stat>?,
+    val stats: List<Stat>,
     val order : Int?,
-
-    //not sure how to use Kotlin Serialization to get this
-    val sprites: Map<String, JsonElement>
-
-//    val nickname: String?,
-//    val capturedDate: String?,
-//    val capturedLevel: Int?,
-//    val detailData: String?
+    // getting this is killing me have asked in Serialization chat waiting for an answer
+    val sprites: Other?,
+    val weight: Int,
+    val height: Int
 )
-//{
-//    "back_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/1.png",
-//    "back_female": null,
-//    "back_shiny": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/shiny/1.png",
-//    "back_shiny_female": null,
-//    "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",
-//    "front_female": null,
-//    "front_shiny": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/1.png",
-//    "front_shiny_female": null,
-//    "other": {
-//    "dream_world": {
-//        "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/1.svg",
-//        "front_female": null
-//    },
-//    "home": {
-//        "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/1.png",
-//        "front_female": null,
-//        "front_shiny": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/shiny/1.png",
-//        "front_shiny_female": null
-//    },
-//    "official-artwork": {
-//        "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"
-//    }
-//},
-
-
-//@Serializable
-//data class Types(
-//    val types : List<Map<String,String>>
-//)
 
 @Serializable
 data class Type(
    val type: Map<String,String>
 )
 
-//@Serializable
-//data class Stats(
-//    val stats: List<Map<String,String>>
-//)
 @Serializable
 data class Stat(
+    val base_stat: Int,
+    val effort : Int,
     val stat: Map<String,String>
 )
 
 @Serializable
 data class Other(
- val other: Map<String,String>
+
+    @SerialName("official-artwork") val officialArtwork: Map<String,String>?,
+//    val other: Map<String,Map<String,String>>?
 )
+
 
 
 /*

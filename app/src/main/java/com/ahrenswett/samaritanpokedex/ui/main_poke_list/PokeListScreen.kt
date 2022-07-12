@@ -1,23 +1,29 @@
 package com.ahrenswett.samaritanpokedex.ui.main_poke_list
 
+
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color.Companion.Black
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.capitalize
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ahrenswett.samaritanpokedex.R
 import com.ahrenswett.samaritanpokedex.domain.models.Pokemon
 import com.ahrenswett.samaritanpokedex.navigation.UiEvent
+import java.util.*
 
 
 /* Shows a list of Pokemon in a grid format.
@@ -37,20 +43,9 @@ fun PokeListScreen(
     viewModel: PokeListViewModel // = hiltViewModel()
 ){
 
-    // collect the flow to display
+    // collect the flow<List> to display would rather have it collect flow<Pokemon> into a list this was proving challenging
     val poke = viewModel.pokemonFlowList.collectAsState(initial = emptyList())
-
-
-    val itemModifier = Modifier
-        .border(1.dp, Black, RoundedCornerShape(5.dp))
-        .height(80.dp)
-        .wrapContentSize()
     val scaffoldState = rememberScaffoldState()
-
-    LaunchedEffect(key1 = true){
-        // TODO: Define
-
-    }
 
     Scaffold(
         topBar = {
@@ -103,18 +98,48 @@ fun PokeListScreen(
         )
     }
 }
+
+
+
+
 @Composable
 fun PokemonItem(pokemon: Pokemon, pokeClick: (PokeListEvents.OnPokeClick) -> Unit ){
     Card(
         elevation = 20.dp,
         backgroundColor = Black,
         modifier = Modifier
-            .padding(16.dp)
+            .padding(8.dp, 8.dp, 8.dp, 8.dp)
             .clip(RoundedCornerShape(10.dp))
             .height(150.dp)
             .fillMaxWidth()
-            .clickable(enabled = true) { pokeClick.invoke(PokeListEvents.OnPokeClick(pokeID = pokemon.order!!)) }
+            .clickable(enabled = true) {
+                println("Clicked ${pokemon.name}, is a ${pokemon.types[0].type.get("name")} pokemon")
+                if(pokemon.sprites?.officialArtwork !=null)println(pokemon.sprites?.officialArtwork.entries)
+                pokeClick.invoke(PokeListEvents.OnPokeClick(pokeID = pokemon.order!!))
+            }
     ) {
 
+        // Having trouble getting the image via KSerialization would use Coil here to render image and loading bar
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "Pokemon number ${pokemon.order} is : ",
+                color = White, textAlign = TextAlign.Center
+            )
+            Text(
+                text = "${pokemon.name}".replaceFirstChar { it.uppercase() },
+                color = White, textAlign = TextAlign.Center
+            )
+            for (type in pokemon.types) {
+                Text(
+                    text = "Type ${type.type.get("name")}".replaceFirstChar { it.uppercase() },
+                    color = White, textAlign = TextAlign.Center
+                )
+            }
+        }
     }
+}
+
+@Composable
+fun PokeType(){
+
 }
