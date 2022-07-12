@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import com.ahrenswett.samaritanpokedex.R
 import com.ahrenswett.samaritanpokedex.domain.models.Pokemon
 import com.ahrenswett.samaritanpokedex.navigation.UiEvent
-import java.util.*
 
 
 /* Shows a list of Pokemon in a grid format.
@@ -43,9 +43,21 @@ fun PokeListScreen(
     viewModel: PokeListViewModel // = hiltViewModel()
 ){
 
+
+
     // collect the flow<List> to display would rather have it collect flow<Pokemon> into a list this was proving challenging
     val poke = viewModel.pokemonFlowList.collectAsState(initial = emptyList())
     val scaffoldState = rememberScaffoldState()
+
+    LaunchedEffect(key1 = true){
+        viewModel.uiEvent.collect{event ->
+            when (event){
+                is UiEvent.Navigate -> onNavigate(event)
+                else -> Unit
+            }
+        }
+
+    }
 
     Scaffold(
         topBar = {
@@ -114,7 +126,7 @@ fun PokemonItem(pokemon: Pokemon, pokeClick: (PokeListEvents.OnPokeClick) -> Uni
             .fillMaxWidth()
             .clickable(enabled = true) {
                 println("Clicked ${pokemon.name}, is a ${pokemon.types[0].type.get("name")} pokemon")
-                if(pokemon.sprites?.officialArtwork !=null)println(pokemon.sprites?.officialArtwork.entries)
+                if (pokemon.sprites?.officialArtwork != null) println(pokemon.sprites?.officialArtwork.entries)
                 pokeClick.invoke(PokeListEvents.OnPokeClick(pokeID = pokemon.order!!))
             }
     ) {

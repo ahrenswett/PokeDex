@@ -24,11 +24,10 @@ class PokeListViewModel @Inject constructor(
 
     // Get the initial response
     var pokemonAddressResponse = repo.baseResponse?.results!!
-    //Get the subsequent Pokemon responses
+
+    //Get the subsequent Pokemon responses this should store in a list and only receive 1 poke at a time but having a little trouble with that method.
     val pokemonFlowList: Flow<List<Pokemon>> = flow {
-            pokemonAddressResponse.forEach{ it ->
-                emit(repo.getListItems(pokemonAddressResponse))
-            }
+            emit(repo.getListItems(pokemonAddressResponse))
     }
 
 
