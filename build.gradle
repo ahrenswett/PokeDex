@@ -10,6 +10,7 @@ buildscript {
     dependencies {
         // Dagger Hilt
         classpath("com.google.dagger:hilt-android-gradle-plugin:2.38.1")
+        //Serialization
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"

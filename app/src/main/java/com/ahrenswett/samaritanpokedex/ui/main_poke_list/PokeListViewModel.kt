@@ -32,13 +32,6 @@ class PokeListViewModel @Inject constructor(
     }
 
 
-
-
-
-
-
-
-
     private val _uiEvents = Channel<UiEvent>()
     val uiEvent = _uiEvents.receiveAsFlow()
 
@@ -49,7 +42,7 @@ class PokeListViewModel @Inject constructor(
                     sendUiEvent (UiEvent.Navigate(Routes.CATCH_LIST.route))
                     )
             is PokeListEvents.OnPokeClick -> (
-                    sendUiEvent(UiEvent.Navigate(Routes.POKE_DETAIL.route + "?event.pokeId=${event.pokeId}"))
+                    sendUiEvent(UiEvent.Navigate(Routes.POKE_DETAIL.route + "?event.pokeId=${event.pokeID}"))
                     )
         }
     }
@@ -60,10 +53,5 @@ class PokeListViewModel @Inject constructor(
         }
     }
 
-    fun addtoList(pokemon: Pokemon, list : MutableList<Pokemon> ):Flow<List<Pokemon>> = flow{
-        list.add(pokemon)
-        emit(list)
-        return@flow
-    }
 
 }

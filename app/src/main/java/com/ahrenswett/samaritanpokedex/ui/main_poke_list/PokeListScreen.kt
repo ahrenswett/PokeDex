@@ -1,10 +1,8 @@
 package com.ahrenswett.samaritanpokedex.ui.main_poke_list
 
-import android.content.ClipData
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,20 +10,14 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ahrenswett.samaritanpokedex.R
 import com.ahrenswett.samaritanpokedex.domain.models.Pokemon
-import com.ahrenswett.samaritanpokedex.navigation.Routes
 import com.ahrenswett.samaritanpokedex.navigation.UiEvent
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.forEach
-import kotlinx.coroutines.flow.toList
-import kotlinx.serialization.builtins.serializer
-import okhttp3.internal.notify
 
 
 /* Shows a list of Pokemon in a grid format.
@@ -40,9 +32,12 @@ import okhttp3.internal.notify
 // Gets data from the PokeListViewModel passes user input to PokeListViewModel
 fun PokeListScreen(
     onNavigate: (UiEvent.Navigate) -> Unit,
-    viewModel: PokeListViewModel
+
+    // should be getting the hilt view model but not showing
+    viewModel: PokeListViewModel // = hiltViewModel()
 ){
 
+    // collect the flow to display
     val poke = viewModel.pokemonFlowList.collectAsState(initial = emptyList())
 
 
@@ -86,26 +81,40 @@ fun PokeListScreen(
 
             )}
         ){
+//        Create a lazy grid this should use paging to call for another response need to learn how to implement
         LazyVerticalGrid(
             // TODO: figure out network calls based on items loaded in the grid
             cells = GridCells.Fixed(2),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.clickable {
-                viewModel.onEvent(PokeListEvents.OnPokeClick(poke as Pokemon))
-            }
-        ){
-//           add on click listener to each item in the grid
-            poke.value.forEachIndexed{ index, pokemon ->
-                item(
-                    span = { GridItemSpan(itemColumn) },
-                    ) {
-                    Text("Pokemon is ${pokemon.name}", itemModifier)
-                    if(pokemon.Stats != null) {
-                        Text(text = "${pokemon.Stats}")
+            content = {
+                items(poke.value.size){ index ->
+                    poke.value[index].let {
+                        //show the items
+                        PokemonItem(
+                            pokemon = it,
+                            // reference the path to the viewModel and pass it to the item
+                            pokeClick = viewModel::onEvent
+
+                        )
                     }
                 }
-            }
-        }
+                      },
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        )
+    }
+}
+@Composable
+fun PokemonItem(pokemon: Pokemon, pokeClick: (PokeListEvents.OnPokeClick) -> Unit ){
+    Card(
+        elevation = 20.dp,
+        backgroundColor = Black,
+        modifier = Modifier
+            .padding(16.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .height(150.dp)
+            .fillMaxWidth()
+            .clickable(enabled = true) { pokeClick.invoke(PokeListEvents.OnPokeClick(pokeID = pokemon.order!!)) }
+    ) {
+
     }
 }
