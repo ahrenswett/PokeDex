@@ -3,21 +3,22 @@ package com.ahrenswett.samaritanpokedex.ui.main_poke_list
 import android.content.ClipData
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
 import com.ahrenswett.samaritanpokedex.R
 import com.ahrenswett.samaritanpokedex.domain.models.Pokemon
+import com.ahrenswett.samaritanpokedex.navigation.Routes
 import com.ahrenswett.samaritanpokedex.navigation.UiEvent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -38,11 +39,11 @@ import okhttp3.internal.notify
 @Composable
 // Gets data from the PokeListViewModel passes user input to PokeListViewModel
 fun PokeListScreen(
-    onPokeListChange: (UiEvent.Navigate) -> Unit,
+    onNavigate: (UiEvent.Navigate) -> Unit,
     viewModel: PokeListViewModel
 ){
 
-    val pokeList = viewModel.pokemonList.collectAsState(initial = 10)
+    val poke = viewModel.pokemonFlowList.collectAsState(initial = emptyList())
 
 
     val itemModifier = Modifier
@@ -53,11 +54,7 @@ fun PokeListScreen(
 
     LaunchedEffect(key1 = true){
         // TODO: Define
-        viewModel.uiEvent.collect{ event ->
-            when(event){
-                is
-            }
-        }
+
     }
 
     Scaffold(
@@ -94,14 +91,21 @@ fun PokeListScreen(
             cells = GridCells.Fixed(2),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.clickable {
+                viewModel.onEvent(PokeListEvents.OnPokeClick(poke as Pokemon))
+            }
         ){
 //           add on click listener to each item in the grid
-
-            viewModel.pokemonList
-                item(span = { GridItemSpan(itemColumn) }  ) {
-                    Text("Item is ${pokeList.value}", itemModifier)
+            poke.value.forEachIndexed{ index, pokemon ->
+                item(
+                    span = { GridItemSpan(itemColumn) },
+                    ) {
+                    Text("Pokemon is ${pokemon.name}", itemModifier)
+                    if(pokemon.Stats != null) {
+                        Text(text = "${pokemon.Stats}")
+                    }
                 }
-//            }
+            }
         }
     }
 }

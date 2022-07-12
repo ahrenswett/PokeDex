@@ -14,12 +14,14 @@ import kotlinx.coroutines.withContext
 class Api(private val client: HttpClient = PokeHttpClient){
 
 
+
+
 //  load the data and save it as the new response
     suspend fun loadPokeAddresses(url: String): Response = withContext(Dispatchers.IO){
-    return@withContext decodeResponse(client.getPoke(url)!!.bodyAsText())
+        return@withContext decodeResponse(client.getPoke(url)!!.bodyAsText())
     }
 
-    suspend fun getListItems(url: String): Pokemon = withContext(Dispatchers.IO){
+    suspend fun getListItem(url: String): Pokemon = withContext(Dispatchers.IO){
         return@withContext decodePokemon(client.getPoke(url)!!.bodyAsText())
     }
 

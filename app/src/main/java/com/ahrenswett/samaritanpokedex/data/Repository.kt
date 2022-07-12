@@ -19,8 +19,12 @@ class Repository @Inject constructor(
 //        TODO("Need to address passing the limit and offset")
         return api.loadPokeAddresses(url)}
 
-    suspend fun getListItems(url: String) : Pokemon{
-        return api.getListItems(url)
+    suspend fun getListItems(urls: List<PokemonAddresses>) : List<Pokemon>{
+        val list: MutableList<Pokemon> = arrayListOf()
+        urls.forEach { poke ->
+            list.add (api.getListItem(poke.url))
+        }
+        return (list)
     }
 
 
