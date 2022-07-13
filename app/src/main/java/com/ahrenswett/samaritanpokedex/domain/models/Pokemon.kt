@@ -1,10 +1,9 @@
 package com.ahrenswett.samaritanpokedex.domain.models
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonElement
 
 @OptIn(ExperimentalSerializationApi::class)
 val pokemonFormat = Json {
@@ -13,69 +12,110 @@ val pokemonFormat = Json {
     explicitNulls = false
     isLenient = true }
 
+//@Serializable
+//data class Pokemon(
+//    val name : String?,
+//    val types : List<Type>,
+//    val stats: List<Stat>,
+//    val order : Int?,
+//    // getting this is killing me have asked in Serialization chat waiting for an answer
+//    val sprites: Other?,
+//    val weight: Int,
+//    val height: Int
+//)
+//
+//@Serializable
+//data class Type(
+//   val type: Map<String,String>
+//)
+//
+//@Serializable
+//data class Stat(
+//    val base_stat: Int,
+//    val effort : Int,
+//    val stat: Map<String,String>
+//)
+//
+//@Serializable
+//data class Other(
+//
+//    @SerialName("official-artwork") val officialArtwork: Map<String,String>?,
+////    val other: Map<String,Map<String,String>>?
+//)
 @Serializable
 data class Pokemon(
-    val name : String?,
-    val types : List<Type>,
-    val Stats: List<Stat>?,
-    val order : Int?,
-
-    //not sure how to use Kotlin Serialization to get this
-    val sprites: Map<String, JsonElement>
-
-//    val nickname: String?,
-//    val capturedDate: String?,
-//    val capturedLevel: Int?,
-//    val detailData: String?
+    val id: Int,
+    val name: String,
+    val order: Int,
+    val sprites: Sprites,
+    val stats: List<Stat>,
+    val types: List<Type>,
+    val weight: Int,
+    val height: Int,
+    var url: String?,
 )
-//{
-//    "back_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/1.png",
-//    "back_female": null,
-//    "back_shiny": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/shiny/1.png",
-//    "back_shiny_female": null,
-//    "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",
-//    "front_female": null,
-//    "front_shiny": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/1.png",
-//    "front_shiny_female": null,
-//    "other": {
-//    "dream_world": {
-//        "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/1.svg",
-//        "front_female": null
-//    },
-//    "home": {
-//        "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/1.png",
-//        "front_female": null,
-//        "front_shiny": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/shiny/1.png",
-//        "front_shiny_female": null
-//    },
-//    "official-artwork": {
-//        "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"
-//    }
-//},
 
 
-//@Serializable
-//data class Types(
-//    val types : List<Map<String,String>>
-//)
+
 
 @Serializable
-data class Type(
-   val type: Map<String,String>
+data class Sprites(
+    val back_default: String,
+    val back_female: String?,
+    val back_shiny: String,
+    val back_shiny_female: String?,
+    val front_default: String,
+    val front_female: String?,
+    val front_shiny: String,
+    val front_shiny_female: String?,
+    val other: Other,
 )
-
-//@Serializable
-//data class Stats(
-//    val stats: List<Map<String,String>>
-//)
 @Serializable
 data class Stat(
-    val stat: Map<String,String>
+    val base_stat: Int,
+    val effort: Int,
+    val stat: StatX
+)
+@Serializable
+data class Type(
+    val slot: Int,
+    val type: TypeX
 )
 
 @Serializable
 data class Other(
- val other: Map<String,String>
+    val dream_world: DreamWorld,
+    val home: Home,
+    @SerialName("official-artwork")val officialArtwork: OfficialArtwork
+)
+
+
+@Serializable
+data class DreamWorld(
+    val front_default: String,
+    val front_female: String?
+)
+@Serializable
+data class Home(
+    val front_default: String,
+    val front_female: String?,
+    val front_shiny: String,
+    val front_shiny_female: String?
+)
+@Serializable
+data class OfficialArtwork(
+    val front_default: String
+)
+
+@Serializable
+data class StatX(
+    val name: String,
+    val url: String
+)
+@Serializable
+data class TypeX(
+    val name: String,
+    val url: String
 )
 
 

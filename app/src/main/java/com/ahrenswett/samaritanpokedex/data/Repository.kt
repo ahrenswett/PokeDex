@@ -13,12 +13,14 @@ import javax.inject.Inject
 class Repository @Inject constructor(
     private val api: Api
 ){
+    //TODO: bad practice need to find another way without run blocking
     var baseResponse: Response? = runBlocking { getPokemonListResponse(Constants.BASE_URL) }
 
     suspend fun getPokemonListResponse(url:String): Response {
 //        TODO("Need to address passing the limit and offset")
         return api.loadPokeAddresses(url)}
 
+//    would like to make this a flow returning a pokemon that is collected in a list that
     suspend fun getListItems(urls: List<PokemonAddresses>) : List<Pokemon>{
         val list: MutableList<Pokemon> = arrayListOf()
         urls.forEach { poke ->
@@ -27,10 +29,10 @@ class Repository @Inject constructor(
         return (list)
     }
 
+    suspend fun getPokemon(url: String):Pokemon{
+        return api.getListItem(url)
+    }
 
-//   suspend fun network(){
-//       val networkSource: NetworkSource = NetworkSource("https://pokeapi.co/api/v2/pokemon?limit=20&offset=0")
-//   }
 
 }
 
