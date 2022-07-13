@@ -38,16 +38,16 @@ import com.ahrenswett.samaritanpokedex.navigation.UiEvent
 // Gets data from the PokeListViewModel passes user input to PokeListViewModel
 fun PokeListScreen(
     onNavigate: (UiEvent.Navigate) -> Unit,
-
     // should be getting the hilt view model but not showing
     viewModel: PokeListViewModel // = hiltViewModel()
 ){
-
 
     // collect the flow<List> to display would rather have it collect flow<Pokemon> into a list this was proving challenging
     val poke = viewModel.pokemonFlowList.collectAsState(initial = emptyList())
     val scaffoldState = rememberScaffoldState()
 
+
+    // launches an event triggered by a VM through the Channel in the VM then navigates to appropriate page Via the navigation Page.
     LaunchedEffect(key1 = true){
         viewModel.uiEvent.collect{event ->
             when (event){
@@ -55,7 +55,6 @@ fun PokeListScreen(
                 else -> Unit
             }
         }
-
     }
 
     Scaffold(
@@ -123,29 +122,31 @@ fun PokemonItem(pokemon: Pokemon, pokeClick: (PokeListEvents.OnPokeClick) -> Uni
             .clickable(enabled = true) {
 
                 println("Clicked ${pokemon.name}, is a ${pokemon.types[0].type.name} pokemon")
-                println(pokemon.sprites.other.officialArtwork.front_default)
+                pokeClick.invoke(PokeListEvents.OnPokeClick(pokemon.url))
 
-                pokeClick.invoke(PokeListEvents.OnPokeClick(poke = pokemon))
             }
     ) {
+//        Load Image
         Row() {
             SubcomposeAsyncImage(
                 model = pokemon.sprites.other.officialArtwork.front_default,
                 loading = {
                     CircularProgressIndicator()
                 },
-                contentDescription = "${pokemon.name} image",
+                contentDescription = "${pokemon.name} image"
+//                  Todo: Take care of case of failure
             )
         }
 
-        // Having trouble getting the image via KSerialization would use Coil here to render image and loading bar
+//        Todo: Break into smaller composables and style card with Material theme
+//        Print the data on the screen
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = "Pokemon number ${pokemon.order} is : ",
                 color = White, textAlign = TextAlign.Center
             )
             Text(
-                text = "${pokemon.name}".replaceFirstChar { it.uppercase() },
+                text = pokemon.name.replaceFirstChar { it.uppercase() },
                 color = White, textAlign = TextAlign.Center
             )
             for (type in pokemon.types) {
@@ -157,34 +158,3 @@ fun PokemonItem(pokemon: Pokemon, pokeClick: (PokeListEvents.OnPokeClick) -> Uni
         }
     }
 }
-
-//Column {
-//                CoilImage(
-//                    request = ImageRequest.Builder(LocalContext.current)
-//                        .data(entry.imageUrl)
-//                        .target {
-//                            viewModel.calcDominantColor(it) { color ->
-//                                dominantColor = color
-//                            }
-//                        }
-//                        .build(),
-//                    contentDescription = entry.pokemonName,
-//                    fadeIn = true,
-//                    modifier = Modifier
-//                        .size(120.dp)
-//                        .align(CenterHorizontally)
-//                ) {
-//                    CircularProgressIndicator(
-//                        color = MaterialTheme.colors.primary,
-//                        modifier = Modifier.scale(0.5f)
-//                    )
-//                }
-//                Text(
-//                    text = entry.pokemonName,
-//                    fontFamily = RobotoCondensed,
-//                    fontSize = 20.sp,
-//                    textAlign = TextAlign.Center,
-//                    modifier = Modifier.fillMaxWidth()
-//                )
-//            }
-//        }

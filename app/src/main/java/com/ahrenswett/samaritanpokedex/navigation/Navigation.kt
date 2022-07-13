@@ -30,13 +30,14 @@ fun Navigation(){
             )
         }
         // Composable for Details page
-        composable(Routes.POKE_DETAIL.route + "?poke={poke}",
+        composable(Routes.POKE_DETAIL.route + "?pokeURL={pokeURL}",
             arguments = listOf(
-            navArgument("poke"){
+            navArgument(name = "pokeURL"){
                 type = NavType.StringType
                 defaultValue = ""
-            }
+            },
         )){
+
         }
     }
 }
