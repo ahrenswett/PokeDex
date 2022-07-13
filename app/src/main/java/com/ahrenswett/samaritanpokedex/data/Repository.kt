@@ -26,11 +26,5 @@ class Repository @Inject constructor(
         }
         return (list)
     }
-
-
-//   suspend fun network(){
-//       val networkSource: NetworkSource = NetworkSource("https://pokeapi.co/api/v2/pokemon?limit=20&offset=0")
-//   }
-
 }
 

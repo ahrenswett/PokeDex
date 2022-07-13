@@ -18,9 +18,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import coil.compose.SubcomposeAsyncImage
 import com.ahrenswett.samaritanpokedex.R
 import com.ahrenswett.samaritanpokedex.domain.models.Pokemon
 import com.ahrenswett.samaritanpokedex.navigation.UiEvent
@@ -42,7 +42,6 @@ fun PokeListScreen(
     // should be getting the hilt view model but not showing
     viewModel: PokeListViewModel // = hiltViewModel()
 ){
-
 
 
     // collect the flow<List> to display would rather have it collect flow<Pokemon> into a list this was proving challenging
@@ -97,10 +96,9 @@ fun PokeListScreen(
                     poke.value[index].let {
                         //show the items
                         PokemonItem(
-                            pokemon = it,
+                            pokemon =it,
                             // reference the path to the viewModel and pass it to the item
                             pokeClick = viewModel::onEvent
-
                         )
                     }
                 }
@@ -127,9 +125,18 @@ fun PokemonItem(pokemon: Pokemon, pokeClick: (PokeListEvents.OnPokeClick) -> Uni
                 println("Clicked ${pokemon.name}, is a ${pokemon.types[0].type.name} pokemon")
                 println(pokemon.sprites.other.officialArtwork.front_default)
 
-                pokeClick.invoke(PokeListEvents.OnPokeClick(pokeID = pokemon.order!!))
+                pokeClick.invoke(PokeListEvents.OnPokeClick(poke = pokemon))
             }
     ) {
+        Row() {
+            SubcomposeAsyncImage(
+                model = pokemon.sprites.other.officialArtwork.front_default,
+                loading = {
+                    CircularProgressIndicator()
+                },
+                contentDescription = "${pokemon.name} image",
+            )
+        }
 
         // Having trouble getting the image via KSerialization would use Coil here to render image and loading bar
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -150,3 +157,34 @@ fun PokemonItem(pokemon: Pokemon, pokeClick: (PokeListEvents.OnPokeClick) -> Uni
         }
     }
 }
+
+//Column {
+//                CoilImage(
+//                    request = ImageRequest.Builder(LocalContext.current)
+//                        .data(entry.imageUrl)
+//                        .target {
+//                            viewModel.calcDominantColor(it) { color ->
+//                                dominantColor = color
+//                            }
+//                        }
+//                        .build(),
+//                    contentDescription = entry.pokemonName,
+//                    fadeIn = true,
+//                    modifier = Modifier
+//                        .size(120.dp)
+//                        .align(CenterHorizontally)
+//                ) {
+//                    CircularProgressIndicator(
+//                        color = MaterialTheme.colors.primary,
+//                        modifier = Modifier.scale(0.5f)
+//                    )
+//                }
+//                Text(
+//                    text = entry.pokemonName,
+//                    fontFamily = RobotoCondensed,
+//                    fontSize = 20.sp,
+//                    textAlign = TextAlign.Center,
+//                    modifier = Modifier.fillMaxWidth()
+//                )
+//            }
+//        }

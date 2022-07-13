@@ -30,14 +30,13 @@ fun Navigation(){
             )
         }
         // Composable for Details page
-        composable(Routes.POKE_DETAIL.route, arguments = listOf(
-            navArgument("pokemonName"){
+        composable(Routes.POKE_DETAIL.route + "?poke={poke}",
+            arguments = listOf(
+            navArgument("poke"){
                 type = NavType.StringType
+                defaultValue = ""
             }
         )){
-            val pokemonName = remember {
-                it.arguments?.getString("pokemonName")
-            }
         }
     }
 }

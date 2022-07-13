@@ -41,7 +41,7 @@ class PokeListViewModel @Inject constructor(
                     sendUiEvent (UiEvent.Navigate(Routes.CATCH_LIST.route))
                     )
             is PokeListEvents.OnPokeClick -> (
-                    sendUiEvent(UiEvent.Navigate(Routes.POKE_DETAIL.route + "?event.pokeId=${event.pokeID}"))
+                    sendUiEvent(UiEvent.Navigate(Routes.POKE_DETAIL.route + "?=poke${event.poke}"))
                     )
         }
     }
