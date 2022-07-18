@@ -7,6 +7,8 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 
 // gets a specified URL and returns the results
@@ -21,14 +23,12 @@ class Api(private val client: HttpClient = PokeHttpClient){
         return@withContext decodeResponse(client.getPoke(url)!!.bodyAsText())
     }
 
-    suspend fun getListItem(url: String): Pokemon = withContext(Dispatchers.IO){
-        println(url)
-        var pokemon = decodePokemon(client.getPoke(url)!!.bodyAsText())
-        pokemon.url = url
-        return@withContext pokemon
+    suspend fun getListItem(url: String): Flow<Pokemon> = flow{
+            val pokemon = decodePokemon(client.getPoke(url)!!.bodyAsText())
+            pokemon.url = url
+            emit(pokemon)
+        }
     }
-
-}
 
 suspend fun HttpClient.getPoke(url: String): HttpResponse? {
     return try {

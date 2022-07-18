@@ -62,3 +62,4 @@ On Android phone you may have to enable third party apps in settings.
 * [Ktor](https://ktor.io/docs/welcome.html)
 * [Kotlin Serialization](https://kotlinlang.org/docs/serialization.html)
 * [Dagger Hilt](https://dagger.dev/hilt/)
+* [Coil](https://coil-kt.github.io/coil/)
