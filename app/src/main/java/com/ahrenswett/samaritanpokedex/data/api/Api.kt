@@ -23,21 +23,21 @@ class Api(private val client: HttpClient = PokeHttpClient){
         return@withContext decodeResponse(client.getPoke(url)!!.bodyAsText())
     }
 
-    suspend fun getListItem(url: String): Flow<Pokemon> = flow{
-            val pokemon = decodePokemon(client.getPoke(url)!!.bodyAsText())
-            pokemon.url = url
-            emit(pokemon)
-        }
+    suspend fun getListItem(url: String): Pokemon {
+        val pokemon = decodePokemon(client.getPoke(url)!!.bodyAsText())
+        pokemon.url = url
+        return pokemon
     }
 
-suspend fun HttpClient.getPoke(url: String): HttpResponse? {
-    return try {
-        get(url)
-    } catch (e: Error) {
-        UiEvent.ShowSnackBar(
-            "Error: ${e.message}",
-            "Make sure you have an Internet connection and retry"
-        )
-        null
+    suspend fun HttpClient.getPoke(url: String): HttpResponse? {
+        return try {
+            get(url)
+        } catch (e: Error) {
+            UiEvent.ShowSnackBar(
+                "Error: ${e.message}",
+                "Make sure you have an Internet connection and retry"
+            )
+            null
+        }
     }
 }

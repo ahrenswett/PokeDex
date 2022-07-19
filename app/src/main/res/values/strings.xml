@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Samaritan Pokedex</string>
+    <string name="poke_details_id">pokeId</string>
 </resources>

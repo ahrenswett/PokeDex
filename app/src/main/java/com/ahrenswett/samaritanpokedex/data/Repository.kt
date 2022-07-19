@@ -8,8 +8,8 @@ import com.ahrenswett.samaritanpokedex.domain.models.Response
 import com.ahrenswett.samaritanpokedex.util.Constants
 import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.runningFold
 
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -19,24 +19,24 @@ class Repository @Inject constructor(
     private val api: Api
 ){
     //TODO: bad practice need to find another way without run blocking
-    lateinit var baseResponse: Response
+    var response: Response? = null
     val pokeList : MutableList<Pokemon> = arrayListOf()
 
     init {
-        baseResponse = runBlocking { getPokemonListResponse(Constants.BASE_URL) }
+        suspend { getPokemonListResponse(Constants.BASE_URL) }
     }
 
-    suspend fun getPokemonListResponse(url:String): Response {
+    suspend fun getPokemonListResponse(url:String){
 //        TODO("Need to address passing the limit and offset")
-        return api.loadPokeAddresses(url)}
+        response = api.loadPokeAddresses(url)}
 
 //    would like to make this a flow returning a pokemon that is collected in a list that
     suspend fun getListItems(urls: List<PokemonAddresses>) : Flow<List<Pokemon>> =
         flow {
-            val pokeListFlow: Flow<List<Pokemon>>
-            urls.forEach(){poke-> api.getListItem(poke.url).runningFold{ list, poke ->
-                (list + poke).sortedBy { it.name } }
-
+            urls.forEach{url->
+                pokeList.add( api.getListItem(url.url))
+                emit ( pokeList )
+            }
         }
 }
 
@@ -44,6 +44,4 @@ class Repository @Inject constructor(
 //        return api.getListItem(url)
 //    }
 
-
-}
 

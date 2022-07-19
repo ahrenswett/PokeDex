@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -24,6 +25,7 @@ import coil.compose.SubcomposeAsyncImage
 import com.ahrenswett.samaritanpokedex.R
 import com.ahrenswett.samaritanpokedex.domain.models.Pokemon
 import com.ahrenswett.samaritanpokedex.navigation.UiEvent
+import kotlinx.coroutines.flow.collect
 
 
 /* Shows a list of Pokemon in a grid format.
@@ -43,7 +45,9 @@ fun PokeListScreen(
 ){
 
     // collect the flow<List> to display would rather have it collect flow<Pokemon> into a list this was proving challenging
-    val poke = viewModel.pokemonFlowList.collectAsState(initial = emptyList())
+    val poke = viewModel.pokeList.collect{
+
+    }
     val scaffoldState = rememberScaffoldState()
 
 
@@ -92,6 +96,7 @@ fun PokeListScreen(
             cells = GridCells.Fixed(2),
             content = {
                 items(poke.value.size){ index ->
+                        println("Poke List Size ${poke.value.size}")
                     poke.value[index].let {
                         //show the items
                         PokemonItem(

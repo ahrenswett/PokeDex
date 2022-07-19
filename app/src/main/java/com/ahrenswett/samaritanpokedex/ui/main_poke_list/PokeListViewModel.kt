@@ -1,17 +1,17 @@
 package com.ahrenswett.samaritanpokedex.ui.main_poke_list
 
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahrenswett.samaritanpokedex.data.Repository
 import com.ahrenswett.samaritanpokedex.domain.models.Pokemon
 import com.ahrenswett.samaritanpokedex.navigation.Routes
 import com.ahrenswett.samaritanpokedex.navigation.UiEvent
+import com.ahrenswett.samaritanpokedex.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,12 +25,17 @@ class PokeListViewModel @Inject constructor(
 ): ViewModel(){
 
     // Get the initial response
-    var pokemonAddressResponse = repo.baseResponse?.results!!
+    var pokemonAddressResponse = mutableStateOf(repo.response)
+    var pokeList : Flow<List<Pokemon>> = emptyFlow()
+
+    init {
+        suspend {
+            repo.getPokemonListResponse(Constants.BASE_URL)
+            pokeList = repo.getListItems(pokemonAddressResponse.value!!.results)
+        }
+    }
 
     //Get the subsequent Pokemon responses this should store in a list and only receive 1 poke at a time but having a little trouble with that method.
-    val pokemonFlowList: Flow<Pokemon> = flow {
-            emit(repo.getListItems(pokemonAddressResponse))
-    }
 
     // channel to send and receive events from for navigation
     private val _uiEvents = Channel<UiEvent>()
