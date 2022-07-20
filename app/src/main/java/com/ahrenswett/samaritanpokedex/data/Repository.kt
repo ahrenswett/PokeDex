@@ -20,8 +20,8 @@ class Repository @Inject constructor(
 ){
     //TODO: bad practice need to find another way without run blocking
     var response: Response? = null
-    val pokeList : MutableList<Pokemon> = arrayListOf()
 
+    //instead of runBlocking
     init {
         suspend { getPokemonListResponse(Constants.BASE_URL) }
     }
@@ -31,13 +31,13 @@ class Repository @Inject constructor(
         response = api.loadPokeAddresses(url)}
 
 //    would like to make this a flow returning a pokemon that is collected in a list that
-    suspend fun getListItems(urls: List<PokemonAddresses>) : Flow<List<Pokemon>> =
-        flow {
-            urls.forEach{url->
-                pokeList.add( api.getListItem(url.url))
-                emit ( pokeList )
-            }
+    suspend fun getListItems(urls: List<PokemonAddresses>) : List<Pokemon>{
+        val pokeList : MutableList<Pokemon> = arrayListOf()
+        urls.forEach{ url ->
+            ( api.getListItem(url.url) )
         }
+        return pokeList
+    }
 }
 
 //    suspend fun getPokemon(url: String):Pokemon{

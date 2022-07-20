@@ -25,14 +25,11 @@ class PokeListViewModel @Inject constructor(
 ): ViewModel(){
 
     // Get the initial response
-    var pokemonAddressResponse = mutableStateOf(repo.response)
-    var pokeList : Flow<List<Pokemon>> = emptyFlow()
+    var pokemonAddressResponse = repo.response?.results!!
 
-    init {
-        suspend {
-            repo.getPokemonListResponse(Constants.BASE_URL)
-            pokeList = repo.getListItems(pokemonAddressResponse.value!!.results)
-        }
+    //Get the subsequent Pokemon responses this should store in a list and only receive 1 poke at a time but having a little trouble with that method.
+    val pokemonFlowList: Flow<List<Pokemon>> = flow {
+        emit(repo.getListItems(pokemonAddressResponse))
     }
 
     //Get the subsequent Pokemon responses this should store in a list and only receive 1 poke at a time but having a little trouble with that method.
