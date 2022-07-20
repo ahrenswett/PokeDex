@@ -45,9 +45,8 @@ fun PokeListScreen(
 ){
 
     // collect the flow<List> to display would rather have it collect flow<Pokemon> into a list this was proving challenging
-    val poke = viewModel.pokeList.collect{
+    val poke = viewModel.pokeList.collectAsState(initial = emptyList())
 
-    }
     val scaffoldState = rememberScaffoldState()
 
 
