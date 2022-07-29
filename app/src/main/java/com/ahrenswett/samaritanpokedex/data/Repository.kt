@@ -19,29 +19,23 @@ class Repository @Inject constructor(
     private val api: Api
 ){
     //TODO: bad practice need to find another way without run blocking
-    var response: Response? = null
+    var response: Response? = runBlocking { getPokemonListResponse(Constants.BASE_URL) }
 
-    //instead of runBlocking
-    init {
-        suspend { getPokemonListResponse(Constants.BASE_URL) }
-    }
+    suspend fun getPokemonListResponse(url:String): Response {
+        return api.loadPokeAddresses(url)}
 
-    suspend fun getPokemonListResponse(url:String){
-//        TODO("Need to address passing the limit and offset")
-        response = api.loadPokeAddresses(url)}
-
-//    would like to make this a flow returning a pokemon that is collected in a list that
+    //    would like to make this a flow returning a pokemon that is collected in a list that
     suspend fun getListItems(urls: List<PokemonAddresses>) : List<Pokemon>{
-        val pokeList : MutableList<Pokemon> = arrayListOf()
-        urls.forEach{ url ->
-            ( api.getListItem(url.url) )
+        val list: MutableList<Pokemon> = arrayListOf()
+        urls.forEach { poke ->
+            list.add (api.getListItem(poke.url))
         }
-        return pokeList
+        return (list)
     }
+
+    suspend fun getPokemon(url: String):Pokemon{
+        return api.getListItem(url)
+    }
+
+
 }
-
-//    suspend fun getPokemon(url: String):Pokemon{
-//        return api.getListItem(url)
-//    }
-
-

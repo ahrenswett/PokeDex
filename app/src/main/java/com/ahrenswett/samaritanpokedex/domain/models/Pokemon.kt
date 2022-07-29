@@ -52,7 +52,6 @@ data class Pokemon(
     val types: List<Type>,
     val weight: Int,
     val height: Int,
-    var url: String?,
 )
 
 

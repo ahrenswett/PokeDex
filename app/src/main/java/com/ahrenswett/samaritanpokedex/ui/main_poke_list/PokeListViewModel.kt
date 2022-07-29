@@ -4,8 +4,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import com.ahrenswett.samaritanpokedex.data.PokemonPagingSource
 import com.ahrenswett.samaritanpokedex.data.Repository
 import com.ahrenswett.samaritanpokedex.domain.models.Pokemon
+import com.ahrenswett.samaritanpokedex.domain.models.PokemonAddresses
 import com.ahrenswett.samaritanpokedex.navigation.Routes
 import com.ahrenswett.samaritanpokedex.navigation.UiEvent
 import com.ahrenswett.samaritanpokedex.util.Constants
@@ -25,12 +30,15 @@ class PokeListViewModel @Inject constructor(
 ): ViewModel(){
 
     // Get the initial response
-    var pokemonAddressResponse = repo.response?.results!!
+    var pokemon : Flow<PagingData<Pokemon>> = Pager(PagingConfig(pageSize = 20)){
+        PokemonPagingSource(repository = repo)
+    }.flow
 
     //Get the subsequent Pokemon responses this should store in a list and only receive 1 poke at a time but having a little trouble with that method.
-    val pokemonFlowList: Flow<List<Pokemon>> = flow {
-        emit(repo.getListItems(pokemonAddressResponse))
-    }
+//    val pokemonFlowList: Flow<List<Pokemon>> = flow {
+//        emit(repo.getListItems(pokemonAddressResponse))
+//    }
+
 
     //Get the subsequent Pokemon responses this should store in a list and only receive 1 poke at a time but having a little trouble with that method.
 
