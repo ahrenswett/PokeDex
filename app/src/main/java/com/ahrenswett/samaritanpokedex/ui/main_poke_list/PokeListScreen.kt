@@ -3,6 +3,7 @@ package com.ahrenswett.samaritanpokedex.ui.main_poke_list
 
 import android.app.Notification
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
@@ -62,11 +63,9 @@ fun PokeListScreen(
             }
         }
     }
-
     Scaffold(
         topBar = {
-            Icon(
-                painter = painterResource(id = R.drawable.title_image),
+            Image( painter = painterResource(id = R.drawable.title_image),
                 contentDescription = "Go to captured Poké list",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -78,15 +77,15 @@ fun PokeListScreen(
             FloatingActionButton(
                 onClick = { viewModel.onEvent(PokeListEvents.onPokeBallClick) },
                 content = {
-                    Icon(
+
+                    Image(
                         //TODO: Figure out why icon is not showing properly
                         painter = painterResource(id = R.drawable.poke_ball),
                         contentDescription = "Go to captured Poké list",
                         Modifier
-                            .size(48.dp)
-                            .alpha(1F)
+                            .size(64.dp)
                             .then(Modifier.fillMaxWidth())
-                            .then(Modifier.fillMaxHeight()),
+                            .then(Modifier.fillMaxHeight())
                     )
                 }
 
@@ -171,3 +170,7 @@ fun PokemonItem(pokemon: Pokemon, pokeClick: (PokeListEvents.OnPokeClick) -> Uni
         }
     }
 }
+
+
+//@Composable
+

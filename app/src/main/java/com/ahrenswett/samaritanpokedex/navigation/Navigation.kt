@@ -39,5 +39,15 @@ fun Navigation(){
         )){
 
         }
+        composable(Routes.CATCH_LIST.route,
+            arguments = listOf(
+                navArgument(name = "catchList"){
+                    type = NavType.StringType
+                    defaultValue = ""
+                }
+            )){
+
+        }
+
     }
 }
