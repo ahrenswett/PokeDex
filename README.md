@@ -1,4 +1,5 @@
 # Samaritan Technical Challenge
+#### By Ahren Swett
 App built using MVVM architecture and utilizes Jetpack Compose for UI, Kotlin Coroutines for concurrency, Kotlin Serialization , K-tor for HTTP requests and Dagger Hilt for dependency injection.
 [Task description](https://arridoarfiadi.notion.site/Samaritan-Mobile-Take-Home-Assignment-c2cd5c8ca99d4fc7994a4e2e3f422957)
 
