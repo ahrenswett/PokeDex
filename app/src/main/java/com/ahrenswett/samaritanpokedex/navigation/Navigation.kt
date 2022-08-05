@@ -1,7 +1,6 @@
 package com.ahrenswett.samaritanpokedex.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -11,6 +10,7 @@ import com.ahrenswett.samaritanpokedex.data.Repository
 import com.ahrenswett.samaritanpokedex.data.api.Api
 import com.ahrenswett.samaritanpokedex.ui.main_poke_list.PokeListScreen
 import com.ahrenswett.samaritanpokedex.ui.main_poke_list.PokeListViewModel
+import com.ahrenswett.samaritanpokedex.ui.poke_details.PokemonDetails
 
 @Composable
 fun Navigation(){
@@ -19,7 +19,8 @@ fun Navigation(){
         navController = navController,
         startDestination = Routes.POKE_LIST.route
     ){
-        // Navigation to Main screen
+
+/************************* Home Poke List ****************************/
         composable(Routes.POKE_LIST.route){
             //Composable that triggers a navigate to Main Screen UI Event
             PokeListScreen(
@@ -29,16 +30,23 @@ fun Navigation(){
                 viewModel = PokeListViewModel(Repository(Api()))
             )
         }
-        // Composable for Details page
-        composable(Routes.POKE_DETAIL.route + "?pokeURL={pokeURL}",
+
+/************************* Details page ****************************/
+        composable(Routes.POKE_DETAIL.route + "?pokemon={pokemon}",
             arguments = listOf(
-            navArgument(name = "pokeURL"){
-                type = NavType.StringType
-                defaultValue = ""
-            },
+                navArgument(name = "pokemon"){
+                    type = NavType.StringType
+                    defaultValue = ":)"
+                },
         )){
+            PokemonDetails(
+                onPopBackStack = {navController.popBackStack()},
+                onCapture = {navController.navigate(it.route)}
+            )
 
         }
+
+/************************* Catch List ****************************/
         composable(Routes.CATCH_LIST.route,
             arguments = listOf(
                 navArgument(name = "catchList"){

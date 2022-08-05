@@ -1,5 +1,6 @@
 package com.ahrenswett.samaritanpokedex.ui.poke_details
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -17,9 +18,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 
+const val POKE_DETAIL_VM_TAG = "PokeDetailsViewModel"
 
 @HiltViewModel
 class PokeDetailsViewModel @Inject constructor(
@@ -27,18 +30,21 @@ class PokeDetailsViewModel @Inject constructor(
     savedStateHandle : SavedStateHandle
 ):ViewModel(){
 
-    var pokemon by mutableStateOf<Pokemon?>(null)
+    var pokemon = mutableStateOf<Pokemon?>(Json.decodeFromString(Pokemon.serializer(),savedStateHandle.get<String>("pokemon")!!))
+        private set
 
     private val _uiEvents = Channel<UiEvent>()
     val uiEvent = _uiEvents.receiveAsFlow()
 
+
     init {
-        savedStateHandle.get<String?>(R.string.poke_details_id.toString())
+        Log.i(
+            "PokeDetailsViewModel",
+            "${savedStateHandle.keys()}, ${savedStateHandle.get<String?>("pokemon")}"
+        )
     }
 
 //TODO: Figure out why navigation is sending data. It seem that the screen is not even correct as no hard coded dat loads on the details screen either.
-
-
 
 
 
