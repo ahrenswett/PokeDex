@@ -47,7 +47,6 @@ import com.ahrenswett.samaritanpokedex.util.pokeTypeStringBuilder
 // Gets data from the PokeListViewModel passes user input to PokeListViewModel
 fun PokeListScreen(
     onNavigate: (UiEvent.Navigate) -> Unit,
-    // should be getting the hilt view model but not showing
     viewModel: PokeListViewModel = hiltViewModel()
 ){
 

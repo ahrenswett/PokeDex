@@ -24,13 +24,12 @@ On Android phone you may have to enable third party apps in settings.
 	**The homepage acts as as the landing/main page for the app.**
 	* [x] Shows a list of Pokemon in a grid format.
 	* [x] If a user selects one of the items, they are taken to the detail page of that item (currently buggy and does not show anything)
-	* [ ] Scrolling list loads more items.
+	* [x] Scrolling list loads more items.
 	* [ ] Floating action Poké ball button takes the user to the list of captured Pokemon
 
 2. Pokemon detail page
-
 	**Allows the user to see more information regarding the Pokemon on this page.**
-	* [ ] Shows more detail about the Pokemon
+	* [x] Shows more detail about the Pokemon
 	* [ ] This page has one action button. It takes the user to a "capture Pokemon page".
 	* [ ] After the user has performed the action, this page updates to reflect the action every time the user opens this specific item’s detail page. You should be able to get this saved information from the local storage (More details on the action section)
 

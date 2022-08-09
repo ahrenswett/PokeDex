@@ -13,7 +13,9 @@ import androidx.paging.PagingData
 import com.ahrenswett.samaritanpokedex.R
 import com.ahrenswett.samaritanpokedex.data.Repository
 import com.ahrenswett.samaritanpokedex.domain.models.Pokemon
+import com.ahrenswett.samaritanpokedex.navigation.Routes
 import com.ahrenswett.samaritanpokedex.navigation.UiEvent
+import com.ahrenswett.samaritanpokedex.ui.main_poke_list.PokeListEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
@@ -44,8 +46,22 @@ class PokeDetailsViewModel @Inject constructor(
         )
     }
 
-//TODO: Figure out why navigation is sending data. It seem that the screen is not even correct as no hard coded dat loads on the details screen either.
-
+    fun onEvent(event: PokeDetailsEvents) {
+        when (event) {
+            is PokeDetailsEvents.CatchPokemon -> {
+                val json = Json.encodeToString(
+                    Pokemon.serializer(),
+                    event.pokemon
+            )
+                sendUiEvent(
+                    UiEvent.Navigate(
+    //                        the equal sign in the wrong place will ruin your day!!!!!
+                        Routes.POKE_DETAIL.route + "?pokemon=${json}")
+                        .also { Log.i("VM", event.pokemon.name) }
+                )
+            }
+        }
+    }
 
 
     private fun sendUiEvent(event: UiEvent){

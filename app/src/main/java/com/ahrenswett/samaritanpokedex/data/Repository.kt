@@ -16,8 +16,7 @@ import javax.inject.Inject
 class Repository @Inject constructor(
     private val api: Api
 ){
-    //TODO: bad practice need to find another way without run blocking
-    var response: Response? = runBlocking { getPokemonListResponse(Constants.BASE_URL) }
+    var response: Response? = null
 
     suspend fun getPokemonListResponse(url:String): Response {
         return api.loadPokeAddresses(url)}

@@ -1,6 +1,7 @@
 package com.ahrenswett.samaritanpokedex.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -27,7 +28,7 @@ fun Navigation(){
                 onNavigate = {
                     navController.navigate(it.route)
                 },
-                viewModel = PokeListViewModel(Repository(Api()))
+                viewModel = hiltViewModel()
             )
         }
 
@@ -39,6 +40,7 @@ fun Navigation(){
                     defaultValue = ":)"
                 },
         )){
+            
             PokemonDetails(
                 onPopBackStack = {navController.popBackStack()},
                 onCapture = {navController.navigate(it.route)}

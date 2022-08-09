@@ -1,9 +1,7 @@
 package com.ahrenswett.samaritanpokedex.ui.poke_details
 import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.magnifier
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -13,8 +11,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -22,9 +21,9 @@ import coil.compose.SubcomposeAsyncImage
 import com.ahrenswett.samaritanpokedex.domain.models.Pokemon
 import com.ahrenswett.samaritanpokedex.navigation.UiEvent
 import com.ahrenswett.samaritanpokedex.util.Constants
+import com.ahrenswett.samaritanpokedex.util.DummyPoke
 import com.ahrenswett.samaritanpokedex.util.pokeStats
 import com.ahrenswett.samaritanpokedex.util.pokeTypeStringBuilder
-import kotlinx.serialization.json.Json
 
 //shows data about the pokemon
 
@@ -43,67 +42,60 @@ fun PokemonDetails(
     val scaffoldState = rememberScaffoldState()
     Log.i("Tag" , viewModel.pokemon.toString())
 
-//
-//
-//    LaunchedEffect(key1 = true){
-//        viewModel.uiEvent.collect { event ->
-//            when(event){
-//                is UiEvent.Navigate -> onNavigate(event)
-//                is UiEvent.PopBackStack -> onPopBackStack()
-//                else -> Unit
-//            }
-//        }
-//    }
-
-
     Scaffold(
-        scaffoldState = scaffoldState
+        scaffoldState = scaffoldState,
+        topBar = {
+            TopBar(pokemon = pokemon!!)
+        },
     ) {
         Column(
-            Modifier.fillMaxSize(),
-            Arrangement.Center,
-            Alignment.CenterHorizontally
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box(
-                modifier = Modifier
-                    .height(260.dp)
-                    .background(
-                        colorResource(Constants.COLOR_MAP.get(pokemon!!.types[0].type.name)!!)
-                    )
-                    .fillMaxWidth()
-                    .padding(5.dp),
-
-                content = {
-                    Alignment.Center
-                    Arrangement.Center
-                    TitleBox(pokemon = pokemon!!)
-                }
-            )
-
+// About Card BOX
             Box(
                 modifier = Modifier.fillMaxWidth(),
                 content = { AboutCard(pokemon = pokemon!!) }
             )
-
+// Base Stats Card Box
             Box(
                 modifier = Modifier.fillMaxWidth(),
                 content = { BaseStatsCard(pokemon = pokemon!!) }
             )
+// Capture Button
 
+            Button(
+                modifier = Modifier
+                    .padding(20.dp,10.dp,20.dp,10.dp),
+                shape = RoundedCornerShape(100.dp),
+                onClick = {
+                    viewModel.onEvent(PokeDetailsEvents.CatchPokemon(pokemon!!))
+                }
+            ){
+                Text(
+                    textAlign = TextAlign.Center,
+                    fontSize = 18.sp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp),
+                    text = "CAPTURE"
+                )
+            }
         }
-
-
     }
-
 }
 
 @Composable
-fun TitleBox(pokemon: Pokemon){
-
+fun TopBar(pokemon: Pokemon){
     Column(
-        Modifier.fillMaxSize(),
-        Arrangement.Center,
-        Alignment.CenterHorizontally
+        modifier =Modifier
+            .fillMaxWidth()
+            .background(colorResource(Constants.COLOR_MAP.get(pokemon!!.types[0].type.name)!!)),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         SubcomposeAsyncImage(
             model = pokemon.sprites.other.officialArtwork.front_default,
@@ -121,8 +113,8 @@ fun TitleBox(pokemon: Pokemon){
             color = Color.White
         )
     }
-
 }
+
 
 @Composable
 fun AboutCard(pokemon: Pokemon){
@@ -132,14 +124,13 @@ fun AboutCard(pokemon: Pokemon){
     Card(
         modifier = Modifier
             .width(520.dp)
-            .padding(20.dp)
-            .shadow(10.dp, RoundedCornerShape(10.dp))
-            .clip(RoundedCornerShape(10.dp)),
+            .padding(20.dp,10.dp,20.dp,10.dp)
+            .shadow(16.dp, RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(16.dp)),
         elevation = 5.dp,
 
     ) {
         Column() {
-            //could put in string resources
             Text(
                 text = "About",
                 fontWeight = FontWeight.Bold,
@@ -175,9 +166,9 @@ fun BaseStatsCard(pokemon: Pokemon){
     Card(
         modifier = Modifier
             .width(520.dp)
-            .padding(20.dp)
-            .shadow(10.dp, RoundedCornerShape(10.dp))
-            .clip(RoundedCornerShape(10.dp)),
+            .padding(20.dp,10.dp,20.dp,10.dp)
+            .shadow(16.dp, RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(16.dp)),
         elevation = 5.dp,
 
         ) {
@@ -198,6 +189,57 @@ fun BaseStatsCard(pokemon: Pokemon){
             }
 
         }
+    }
+
+}
+
+
+
+/*************************** Preview  **********************************/
+//TODO: Figure out why not working
+@Preview
+@Composable
+fun DetailsPreview(){
+    val pokemon = DummyPoke().bulbasaur
+
+    Scaffold(
+    ) {
+        Column(
+            Modifier.fillMaxSize(),
+            Arrangement.Center,
+            Alignment.CenterHorizontally
+        ) {
+            Box(
+                modifier = Modifier
+                    .height(260.dp)
+                    .background(
+                        colorResource(Constants.COLOR_MAP.get(pokemon!!.types[0].type.name)!!)
+                    )
+                    .fillMaxWidth()
+                    .padding(5.dp),
+
+                content = {
+                    Alignment.Center
+                    Arrangement.Center
+                    TopBar(pokemon = pokemon!!)
+                }
+            )
+
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                content = { AboutCard(pokemon = pokemon!!) }
+            )
+
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                content = { BaseStatsCard(pokemon = pokemon!!) }
+            )
+
+
+
+        }
+
+
     }
 
 }

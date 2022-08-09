@@ -34,10 +34,12 @@ class PokemonPagingSource(
             LoadResult.Error(e)
         }
     }
+
+
+
+
     //TODO figure this out
     override fun getRefreshKey(state: PagingState<String, Pokemon>): String? {
-
-
         return null
     }
 
