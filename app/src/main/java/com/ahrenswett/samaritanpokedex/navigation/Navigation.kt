@@ -1,5 +1,7 @@
 package com.ahrenswett.samaritanpokedex.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
@@ -13,6 +15,7 @@ import com.ahrenswett.samaritanpokedex.ui.main_poke_list.PokeListScreen
 import com.ahrenswett.samaritanpokedex.ui.main_poke_list.PokeListViewModel
 import com.ahrenswett.samaritanpokedex.ui.poke_details.PokemonDetails
 
+@RequiresApi(Build.VERSION_CODES.R)
 @Composable
 fun Navigation(){
     val navController = rememberNavController()
@@ -42,8 +45,8 @@ fun Navigation(){
         )){
             
             PokemonDetails(
-                onPopBackStack = {navController.popBackStack()},
-                onCapture = {navController.navigate(it.route)}
+//                onPopBackStack = {navController.popBackStack()},
+//                onCapture = {navController.navigate(it.route)}
             )
 
         }

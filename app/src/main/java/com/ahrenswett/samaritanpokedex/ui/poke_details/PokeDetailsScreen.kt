@@ -1,7 +1,7 @@
 package com.ahrenswett.samaritanpokedex.ui.poke_details
-import android.provider.ContactsContract
+import android.os.Build
 import android.util.Log
-import android.widget.PopupWindow
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,27 +12,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
+import com.ahrenswett.samaritanpokedex.domain.models.CapturedPokemon
 import com.ahrenswett.samaritanpokedex.domain.models.Pokemon
-import com.ahrenswett.samaritanpokedex.navigation.UiEvent
-import com.ahrenswett.samaritanpokedex.ui.main_poke_list.PokeListEvents
 import com.ahrenswett.samaritanpokedex.util.Constants
-import com.ahrenswett.samaritanpokedex.util.DummyPoke
 import com.ahrenswett.samaritanpokedex.util.pokeStats
 import com.ahrenswett.samaritanpokedex.util.pokeTypeStringBuilder
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import java.io.FileOutputStream
-import java.io.FileWriter
+import java.util.*
+import kotlin.random.Random.Default.nextInt
 
 /*
 This screen shows data about the pokemon a user clicked on in the PokeListScreen
@@ -42,22 +37,22 @@ it then gives the option to save the pokemon to a private Json file of captured 
 const val TAG = "PokemonDetailsPage"
 //TODO: figure out why pressing back does not allow to go to another pokemon
 
+@RequiresApi(Build.VERSION_CODES.R)
 @Composable
 fun PokemonDetails(
-     onPopBackStack: () -> Unit,
-     onCapture: (UiEvent.Navigate) -> Unit,
     viewModel: PokeDetailsViewModel = hiltViewModel()
 ){
-    val capturePokemon = remember { mutableStateOf(false) }
     val openDialog = remember { mutableStateOf(false) }
-    val pokemon by remember {mutableStateOf(viewModel.pokemon.value)}
+    val pokemon = viewModel.pokemon
+//    val pokemonCaptureData by remember { mutableStateOf(pokemon!!.capturedData)}
     val scaffoldState = rememberScaffoldState()
+
     Log.i("Tag" , viewModel.pokemon.toString())
 
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            TopBar(pokemon = pokemon!!)
+            TopBar(pokemon = pokemon.value!!)
         },
     ) {
         Column(
@@ -71,63 +66,98 @@ fun PokemonDetails(
             // About Card BOX
             Box(
                 modifier = Modifier.fillMaxWidth(),
-                content = { AboutCard(pokemon = pokemon!!) }
+                content = { AboutCard(pokemon = pokemon.value!!) }
             )
 
             // Base Stats Card Box
             Box(
                 modifier = Modifier.fillMaxWidth(),
-                content = { BaseStatsCard(pokemon = pokemon!!) }
+                content = { BaseStatsCard(pokemon = pokemon.value!!) }
             )
+//TODO: figure out why not working compose is supposed to reload
+            ButtonOrCaptureInfo(pokemon, openDialog)
+//            if (pokemonCaptureData != null) {
+////                Show Capture Info
+//                CapturedCard(pokemon!!.capturedData!!)
+//            } else {
+////                Show Capture Button
+//                Button(
+//                    modifier = Modifier
+//                        .padding(20.dp, 10.dp, 20.dp, 10.dp),
+//                    shape = RoundedCornerShape(100.dp),
+//                    onClick = { openDialog.value = true }
+//                ) {
+//                    Text(
+//                        textAlign = TextAlign.Center,
+//                        fontSize = 18.sp,
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(10.dp),
+//                        text = "CAPTURE"
+//                    )
+//                }
+//            }
 
-            // Capture Button
-            Button(
+//
+            PopUp(openDialog, pokemon.value!!, viewModel)
+
+        }
+    }
+}
+
+@Composable
+fun ButtonOrCaptureInfo(pokemon: MutableState<Pokemon?>, openDialog: MutableState<Boolean>) {
+    Log.i(POKE_DETAIL_VM_TAG, "BUTTTTONNNNNN")
+    if (pokemon.value!!.capturedData != null) {
+//                Show Capture Info
+        CapturedCard(pokemon.value!!.capturedData!!)
+    } else {
+//                Show Capture Button
+        Button(
+            modifier = Modifier
+                .padding(20.dp, 10.dp, 20.dp, 10.dp),
+            shape = RoundedCornerShape(100.dp),
+            onClick = { openDialog.value = true }
+        ) {
+            Text(
+                textAlign = TextAlign.Center,
+                fontSize = 18.sp,
                 modifier = Modifier
-                    .padding(20.dp,10.dp,20.dp,10.dp),
-                shape = RoundedCornerShape(100.dp),
-                onClick = {openDialog.value = true}
-            ){
-                Text(
-                    textAlign = TextAlign.Center,
-                    fontSize = 18.sp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp),
-                    text = "CAPTURE"
-                )
-            }
-
-            PopUp(openDialog, pokemon!!, onPopBackStack)
-
+                    .fillMaxWidth()
+                    .padding(10.dp),
+                text = "CAPTURE"
+            )
         }
     }
 }
 
 /******************************** TopBar Composable ********************************/
 @Composable
-fun TopBar(pokemon: Pokemon){
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(colorResource(Constants.COLOR_MAP[pokemon.types[0].type.name]!!)),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        SubcomposeAsyncImage(
-            model = pokemon.sprites.other.officialArtwork.front_default,
-            loading = {
-                CircularProgressIndicator()
-            },
-            contentDescription = "${pokemon.name} image",
-            //  Todo: Take care of case of failure
-            alignment = Alignment.Center
-        )
-        Text(
-            fontSize = 26.sp,
-            fontWeight = FontWeight.Bold,
-            text = "#${pokemon.id} ${pokemon.name}",
-            color = Color.White
-        )
+fun TopBar(pokemon: Pokemon?){
+    if (pokemon != null) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(colorResource(Constants.COLOR_MAP[pokemon.types[0].type.name]!!)),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            SubcomposeAsyncImage(
+                model = pokemon.sprites.other.officialArtwork.front_default,
+                loading = {
+                    CircularProgressIndicator()
+                },
+                contentDescription = "${pokemon.name} image",
+                //  Todo: Take care of case of failure
+                alignment = Alignment.Center
+            )
+            Text(
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold,
+                text = "#${pokemon.id} ${pokemon.name}",
+                color = Color.White
+            )
+        }
     }
 }
 
@@ -173,6 +203,7 @@ fun AboutCard(pokemon: Pokemon){
 }
 
 
+
 /******************************** Base Stats Card Composable ********************************/
 @Composable
 fun BaseStatsCard(pokemon: Pokemon){
@@ -210,11 +241,14 @@ fun BaseStatsCard(pokemon: Pokemon){
 
 
 /******************************** PopUp Composable ********************************/
+@RequiresApi(Build.VERSION_CODES.R)
 @Composable
-fun PopUp(openDialog : MutableState<Boolean>, pokemon: Pokemon, onPopBackStack: () -> Unit){
-    var nickname by remember { mutableStateOf("")}
-    var capturedDate by remember { mutableStateOf("")}
-    var capturedLevel by remember { mutableStateOf("")}
+fun PopUp(openDialog : MutableState<Boolean>, pokemon: Pokemon, viewModel:PokeDetailsViewModel){
+
+    val context = LocalContext.current
+    var nickname  by remember { mutableStateOf("")}
+    val capturedDate = Calendar.getInstance().toString()
+    val capturedLevel = nextInt(1 , 100)
 
     if (openDialog.value) {
         Dialog(
@@ -226,14 +260,35 @@ fun PopUp(openDialog : MutableState<Boolean>, pokemon: Pokemon, onPopBackStack: 
                     .fillMaxWidth()
                     .background(
                         Color.White,
-                        RoundedCornerShape(40)
+                        RoundedCornerShape(100)
                     )
             ){
                 Column() {
                     Text(
-                        text = "Capturing ${pokemon.name}",
+                        text = "Capturing ${pokemon.name.uppercase()}",
                         fontWeight = FontWeight.Bold,
                         fontSize = 26.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    )
+
+//                    Capture Level Field
+                    TextField(
+                        value = capturedLevel.toString(),
+                        onValueChange = {},
+                        label = {Text(text = "Level")},
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    )
+
+//                  Capture Date Field
+                    TextField(
+                        value = capturedDate,
+                        onValueChange = {},
+                        label = { Text(text ="Date Captured")},
+                        maxLines = 1,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp)
@@ -243,79 +298,121 @@ fun PopUp(openDialog : MutableState<Boolean>, pokemon: Pokemon, onPopBackStack: 
                     TextField(
                         value = nickname,
                         onValueChange = {nickname = it},
+                        label = { Text(text = "Nickname")},
                         placeholder = {
                             Text(
-                                text =  "Nickname",
+                                text =  "(optional)",
                                 fontSize = 20.sp,
                             )
                                       },
+                        maxLines = 1,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp)
                     )
 
-//                  Capture Date Field
-                    TextField(
-                        value = capturedDate,
-                        onValueChange = {capturedDate = it},
-                        placeholder = {
-                             Text(
-                                 text = "Captured Date",
-                                 fontSize = 20.sp,
-                             )
-                                      },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                    )
-
-//                    Capture Level Field
-                    TextField(
-                        value = capturedLevel,
-                        onValueChange = {capturedLevel = it},
-                        placeholder = {
-                            Text(
-                                text = "Captured Level",
-                                fontSize = 20.sp,
-                            )
-                                      },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                    )
-
-//                    Capture Button in dialog
                     Button(
                         modifier = Modifier
-                            .padding(20.dp,10.dp,20.dp,10.dp),
+                            .padding(20.dp, 10.dp, 20.dp, 10.dp),
                         shape = RoundedCornerShape(100.dp),
                         onClick = {
-                            val pokeJson = Json.encodeToString(Pokemon.serializer(),pokemon)
-//                            if a file does not exist
-                            val file = "pokeCatchList"
-                            val outputStream = FileWriter(file)
-                            outputStream.write(pokeJson)
-                            onPopBackStack()
+                            //Shou
+//                            create a capturedPokemon
+                            viewModel.pokemon.value!!.capturedData = CapturedPokemon(
+                                pokemon.name,
+                                nickname,
+                                capturedDate,
+                                capturedLevel,
+                            )
+
+//                                close the dialog
+                            openDialog.value = false
 
 
-//                            create it
-//                            otherwise read from it
-//                            then append new poke data to it
-//                            write back to file
+//                            change captured from false to ture triggering remove capture button and show capture data
 
+//                                if (File("${context.filesDir}/poke.txt").exists()) {
+////                                get it and pas it to VM
+//                                } else {
+////                                create JsonARRAY with captured pokemon. should move this to app setup and just append to array here
+//                                    File("${context.filesDir}/poke.txt").writer()
+//                                }
+
+//                                val file =
+//                                    context.openFileInput("poke.txt") ?: File("${context.filesDir}")
+//                                val jsonArrayString =
+//                                    context.openFileInput("poke.txt").bufferedReader()
+//                                        .useLines { lines ->
+//                                            lines.fold("") { some, text ->
+//                                                "$some\n$text"
+//                                            }
+//                                        }
+//                            does file exist?
+//                            read it and parse to array
+
+//                            val json = JsonArray.serializer(
+//                                Pokemon.serializer(), pokemon)
+//                            context.openFileOutput("poke.txt", Context.MODE_PRIVATE).use {
+//                                it.write(json.toByteArray())
+//                            }
+//                            val jsonArrayString = context.openFileInput("poke.txt").bufferedReader().useLines { lines ->
+//                                lines.fold("") { some, text ->
+//                                    "$some\n$text"
+//                                }
+//                            }
                         }
-                    ){
+                    ) {
                         Text(
                             textAlign = TextAlign.Center,
                             fontSize = 18.sp,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(10.dp),
+                                .padding(4.dp),
                             text = "CAPTURE"
                         )
                     }
                 }
             }
+        }
+    }
+}
+
+
+@Composable
+fun CapturedCard(data: CapturedPokemon){
+
+    Card(
+        modifier = Modifier
+            .width(520.dp)
+            .padding(20.dp, 10.dp, 20.dp, 10.dp)
+            .shadow(16.dp, RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(16.dp)),
+        elevation = 5.dp,
+
+        ) {
+        Column() {
+            Text(
+                text = "Capture Information",
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp,
+                modifier = Modifier.padding(8.dp),
+            )
+            Text(
+                text = "Nickname: ${data.nickname}",
+                fontSize = 20.sp,
+                modifier = Modifier.padding(8.dp)
+            )
+            Text(
+                text = "Captured on: ${data.captureDate}",
+                fontSize = 20.sp,
+                modifier = Modifier.padding(8.dp)
+            )
+
+            Text(
+                text = "Captured Level: ${data.capturedLevel}",
+                fontSize = 20.sp,
+                modifier = Modifier.padding(8.dp)
+            )
         }
     }
 }

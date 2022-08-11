@@ -4,6 +4,7 @@ import com.ahrenswett.samaritanpokedex.R
 
 object Constants {
     const val BASE_URL = "https://pokeapi.co/api/v2/pokemon?limit=20&offset=0"
+
     val COLOR_MAP = mapOf(
         "rock" to R.color.rock,
         "ghost" to R.color.ghost,
@@ -23,5 +24,5 @@ object Constants {
         "fire" to R.color.fire,
         "electric" to R.color.electric,
         "dragon" to R.color.dragon,
-        )
+    )
 }
